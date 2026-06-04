@@ -1,0 +1,56 @@
+# Environment & Configuration (CRITICAL SECURITY)
+.env
+.env.local
+.env.*.local
+config.local.php
+*.key
+*.pem
+*.pub
+*.cert
+*.p12
+*.pfx
+jwt.key
+jwt.key.pub
+
+# Database Dumps and Backups (CRITICAL SECURITY)
+*.sql
+*.sqlite
+*.db
+*.bak
+*.backup
+*.dump
+backup/
+backups/
+
+# Logs and Caches
+*.log
+logs/
+cache/
+tmp/
+temp/
+var/
+.phpunit.result.cache
+
+# Composer / Dependencies
+vendor/
+composer.phar
+composer.lock
+
+# IDE / Editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*~
+
+# Operating System Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+.Spotlight-V100
+.Trashes
+
