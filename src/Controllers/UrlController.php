@@ -127,7 +127,7 @@ class UrlController {
             exit;
         } else {
             http_response_code(404);
-            $pageTitle = 'Link Not Found - ToolBox';
+            $pageTitle = 'Link Not Found - ' . App::siteName();
             $metaDescription = 'The short URL you are trying to visit is wrong or has been removed.';
             $contentView = 'pages/url_not_found';
             require __DIR__ . '/../Views/layout.php';
@@ -162,7 +162,7 @@ class UrlController {
         
         $payload = json_encode([
             "client" => [
-                "clientId" => "toolbox-app",
+                "clientId" => "utilix-app",
                 "clientVersion" => "1.0.0"
             ],
             "threatInfo" => [

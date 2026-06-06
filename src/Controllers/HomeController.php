@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers;
 
+use App\Config\App;
 use App\Config\Database;
 use PDO;
 
@@ -27,7 +28,7 @@ class HomeController {
         }
 
         // Passing data to the view via variables
-        $pageTitle = 'ToolBox - Online Utilities';
+        $pageTitle = App::siteName() . ' - Online Utilities';
         $contentView = 'pages/home'; // Path relative to Views folder
         
         require __DIR__ . '/../Views/layout.php';
@@ -52,7 +53,7 @@ class HomeController {
         // Update views counter (optional, can be done asynchronously for performance)
         $db->prepare("UPDATE tools SET views = views + 1 WHERE id = :id")->execute(['id' => $tool['id']]);
 
-        $pageTitle = $tool['meta_title'] ?? ($tool['name'] . ' - ToolBox');
+        $pageTitle = $tool['meta_title'] ?? ($tool['name'] . ' - ' . App::siteName());
         $metaDescription = $tool['meta_description'] ?? $tool['description'];
         
         $viewFile = 'pages/tools/' . $slug;
@@ -69,8 +70,8 @@ class HomeController {
      * Display the Privacy Policy page
      */
     public function privacy(): void {
-        $pageTitle = 'Privacy Policy - ToolBox';
-        $metaDescription = 'Read the privacy policy for ToolBox to understand how we handle your data.';
+        $pageTitle = 'Privacy Policy - ' . App::siteName();
+        $metaDescription = 'Read the privacy policy for ' . App::siteName() . ' to understand how we handle your data.';
         $contentView = 'pages/privacy';
         require __DIR__ . '/../Views/layout.php';
     }
@@ -79,8 +80,8 @@ class HomeController {
      * Display the About page
      */
     public function about(): void {
-        $pageTitle = 'About - ToolBox';
-        $metaDescription = 'Learn more about ToolBox, an open-source personal utility project.';
+        $pageTitle = 'About - ' . App::siteName();
+        $metaDescription = 'Learn more about ' . App::siteName() . ', an open-source personal utility project.';
         $contentView = 'pages/about';
         require __DIR__ . '/../Views/layout.php';
     }
@@ -89,8 +90,8 @@ class HomeController {
      * Display the Terms of Service page
      */
     public function terms(): void {
-        $pageTitle = 'Terms of Service - ToolBox';
-        $metaDescription = 'Read the terms of service for ToolBox regarding usage and rules.';
+        $pageTitle = 'Terms of Service - ' . App::siteName();
+        $metaDescription = 'Read the terms of service for ' . App::siteName() . ' regarding usage and rules.';
         $contentView = 'pages/terms';
         require __DIR__ . '/../Views/layout.php';
     }

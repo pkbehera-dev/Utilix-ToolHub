@@ -80,7 +80,7 @@
                 <h2>7. Contact Us</h2>
                 <p>If you have any questions or concerns about this Privacy Policy, please reach out to us:</p>
                 <p><strong>Email:</strong> <?= htmlspecialchars(\App\Config\App::supportEmail()) ?></p>
-                <p><strong>Address:</strong> ToolBox Solutions Inc., 123 Dev Lane, Tech Suite 404</p>
+                <p><strong>Address:</strong> <?= htmlspecialchars(\App\Config\App::siteName()) ?> Solutions Inc., 123 Dev Lane, Tech Suite 404</p>
             </section>
         </article>
     </div>
