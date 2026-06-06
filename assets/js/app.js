@@ -27,6 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const cmdBackdrop = document.getElementById('cmd-palette-backdrop');
     const cmdInput = document.getElementById('cmd-input');
     const headerSearchBtn = document.getElementById('header-search-btn');
+    const mobileSearchFab = document.getElementById('mobile-search-fab');
+    const catButtons = document.querySelectorAll('.cmd-cat-btn');
+    
+    let activeCategory = 'all';
 
     function openCommandPalette() {
         if (cmdBackdrop) {
@@ -41,12 +45,27 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cmdBackdrop) {
             cmdBackdrop.style.display = 'none';
             if (cmdInput) cmdInput.value = '';
+            
+            // Reset active category
+            activeCategory = 'all';
+            catButtons.forEach(b => {
+                if (b.getAttribute('data-category') === 'all') {
+                    b.classList.add('active');
+                } else {
+                    b.classList.remove('active');
+                }
+            });
+            
             filterCommandPalette('');
         }
     }
 
     if (headerSearchBtn) {
         headerSearchBtn.addEventListener('click', openCommandPalette);
+    }
+
+    if (mobileSearchFab) {
+        mobileSearchFab.addEventListener('click', openCommandPalette);
     }
 
     if (cmdBackdrop) {
@@ -58,12 +77,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Category button click handlers
+    catButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            catButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            activeCategory = btn.getAttribute('data-category');
+            
+            // Re-run filter with current search input value
+            const term = cmdInput ? cmdInput.value : '';
+            filterCommandPalette(term);
+        });
+    });
+
     // Hotkeys for Command Palette
     document.addEventListener('keydown', (e) => {
         // Ctrl+K or Cmd+K
-        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K' || e.keyCode === 75 || e.code === 'KeyK')) {
             e.preventDefault();
+            e.stopPropagation();
             openCommandPalette();
+            return false;
         }
         
         // '/' key (when not in an input)
@@ -87,7 +122,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         cmdItems.forEach(item => {
             const text = item.textContent.toLowerCase();
-            if (text.includes(term)) {
+            const category = item.getAttribute('data-category-slug');
+            
+            const matchesTerm = text.includes(term);
+            const matchesCategory = (activeCategory === 'all' || category === activeCategory);
+            
+            if (matchesTerm && matchesCategory) {
                 item.style.display = 'flex';
             } else {
                 item.style.display = 'none';
@@ -136,5 +176,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const homepageSearch = document.getElementById('tool-search');
     if (homepageSearch) {
         homepageSearch.addEventListener('input', (e) => filterHomepageGrid(e.target.value));
+    }
+
+    // 5. Live Header Clock Widget
+    const clockTime = document.getElementById('clock-time');
+    const clockDate = document.getElementById('clock-date');
+
+    function updateClock() {
+        if (!clockTime || !clockDate) return;
+        
+        const now = new Date();
+        
+        // Time format: HH:MM:SS
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        clockTime.textContent = `${hours}:${minutes}:${seconds}`;
+        
+        // Date format: Mon DD, YYYY (e.g., Jun 05, 2026)
+        const options = { month: 'short', day: '2-digit', year: 'numeric' };
+        clockDate.textContent = now.toLocaleDateString('en-US', options);
+    }
+
+    if (clockTime && clockDate) {
+        updateClock();
+        setInterval(updateClock, 1000);
     }
 });
