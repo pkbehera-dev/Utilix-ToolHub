@@ -1,5 +1,5 @@
 <div class="tool-header" style="text-align: center; margin-bottom: 30px;">
-    <h2><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-binoculars') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Text Diff Checker') ?></h2>
+    <h1><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-binoculars') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Text Diff Checker') ?></h1>
     <p style="color: var(--color-text-secondary);"><?= htmlspecialchars($tool['description'] ?? 'Compare two text blocks side-by-side or inline to highlight additions, deletions, and differences.') ?></p>
 </div>
 

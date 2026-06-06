@@ -1,5 +1,5 @@
 <div class="tool-header" style="text-align: center; margin-bottom: 30px;">
-    <h2><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-dice') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Dice Roller') ?></h2>
+    <h1><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-dice') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Dice Roller') ?></h1>
     <p style="color: var(--color-text-secondary);"><?= htmlspecialchars($tool['description'] ?? 'Roll one or multiple virtual dice for games or decisions.') ?></p>
 </div>
 

@@ -1,5 +1,5 @@
 <div class="tool-header" style="text-align: center; margin-bottom: 30px;">
-    <h2><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-file-lines') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Lorem Ipsum Generator') ?></h2>
+    <h1><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-file-lines') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Lorem Ipsum Generator') ?></h1>
     <p style="color: var(--color-text-secondary);"><?= htmlspecialchars($tool['description'] ?? 'Generate custom dummy or placeholder text for your designs and layouts.') ?></p>
 </div>
 

@@ -1,5 +1,5 @@
 <div class="tool-header" style="text-align: center; margin-bottom: 30px;">
-    <h2><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-calculator') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Time Calculator') ?></h2>
+    <h1><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-calculator') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Time Calculator') ?></h1>
     <p style="color: var(--color-text-secondary);"><?= htmlspecialchars($tool['description'] ?? 'Add or subtract time durations and calculate intervals or differences between clock times.') ?></p>
 </div>
 

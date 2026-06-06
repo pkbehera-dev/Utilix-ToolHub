@@ -29,8 +29,13 @@ class AdminController {
             'total_tools' => $db->query("SELECT COUNT(*) FROM tools")->fetchColumn(),
             'active_tools' => $db->query("SELECT COUNT(*) FROM tools WHERE is_active = 1")->fetchColumn(),
             'total_categories' => $db->query("SELECT COUNT(*) FROM categories")->fetchColumn(),
-            'total_tool_views' => $db->query("SELECT SUM(views) FROM tools")->fetchColumn() ?: 0,
-            'most_popular_tool' => $db->query("SELECT name, views FROM tools ORDER BY views DESC LIMIT 1")->fetch(),
+            'total_tool_views' => $db->query("SELECT SUM(total_views) FROM tool_usage_stats")->fetchColumn() ?: 0,
+            'most_popular_tool' => $db->query("
+                SELECT t.name, COALESCE(s.total_views, 0) AS views 
+                FROM tools t 
+                LEFT JOIN tool_usage_stats s ON t.id = s.tool_id 
+                ORDER BY views DESC LIMIT 1
+            ")->fetch(),
             'total_short_urls' => $db->query("SELECT COUNT(*) FROM short_urls")->fetchColumn()
         ];
         
@@ -44,6 +49,54 @@ class AdminController {
         $pageTitle = 'Dashboard - ' . App::siteName() . ' Admin';
         $contentView = 'admin/dashboard';
         
+        require __DIR__ . '/../Views/admin/layout.php';
+    }
+
+    /**
+     * Usage Analytics Panel
+     */
+    public function stats(): void {
+        $db = Database::getConnection();
+        
+        // Fetch all tools joined with usage statistics
+        $stmt = $db->query("
+            SELECT t.name, t.slug, c.name as category_name,
+                   COALESCE(s.total_views, 0) AS total_views,
+                   COALESCE(s.recurring_views, 0) AS recurring_views,
+                   COALESCE(s.total_users, 0) AS total_users,
+                   COALESCE(s.total_seconds, 0) AS total_seconds
+            FROM tools t
+            JOIN categories c ON t.category_id = c.id
+            LEFT JOIN tool_usage_stats s ON t.id = s.tool_id
+            ORDER BY total_views DESC, t.name ASC
+        ");
+        $analytics = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Calculate site-wide metrics
+        $siteStats = [
+            'total_views' => 0,
+            'total_recurring' => 0,
+            'total_users' => 0,
+            'total_seconds' => 0,
+            'top_tool' => 'None',
+            'top_tool_views' => 0
+        ];
+
+        foreach ($analytics as $row) {
+            $siteStats['total_views'] += $row['total_views'];
+            $siteStats['total_recurring'] += $row['recurring_views'];
+            $siteStats['total_users'] += $row['total_users'];
+            $siteStats['total_seconds'] += $row['total_seconds'];
+            
+            if ($row['total_views'] > $siteStats['top_tool_views']) {
+                $siteStats['top_tool'] = $row['name'];
+                $siteStats['top_tool_views'] = $row['total_views'];
+            }
+        }
+
+        $pageTitle = 'Usage Analytics - Admin';
+        $contentView = 'admin/stats';
+
         require __DIR__ . '/../Views/admin/layout.php';
     }
 

@@ -1,5 +1,5 @@
 <div class="tool-header" style="text-align: center; margin-bottom: 30px;">
-    <h2><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-font') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Text to ASCII Art') ?></h2>
+    <h1><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-font') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Text to ASCII Art') ?></h1>
     <p style="color: var(--color-text-secondary);"><?= htmlspecialchars($tool['description'] ?? 'Convert normal text into decorative ASCII art banners instantly.') ?></p>
 </div>
 

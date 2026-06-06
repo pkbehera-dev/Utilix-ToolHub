@@ -107,6 +107,7 @@ use App\Config\App;
                 <ul>
                     <li><a href="<?= App::adminUrl('/dashboard') ?>"><i class="fa-solid fa-chart-line"></i> Dashboard</a></li>
                     <li><a href="<?= App::adminUrl('/tools') ?>"><i class="fa-solid fa-wrench"></i> Manage Tools</a></li>
+                    <li><a href="<?= App::adminUrl('/stats') ?>"><i class="fa-solid fa-chart-bar"></i> Usage Analytics</a></li>
                     <li><a href="<?= App::adminUrl('/categories') ?>"><i class="fa-solid fa-tags"></i> Categories</a></li>
                     <li><a href="<?= App::adminUrl('/urls') ?>"><i class="fa-solid fa-link"></i> URL Shortener</a></li>
                     <li><a href="<?= App::adminUrl('/features') ?>"><i class="fa-solid fa-lightbulb"></i> Feature Requests</a></li>

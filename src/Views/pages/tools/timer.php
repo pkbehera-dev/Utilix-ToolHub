@@ -1,5 +1,5 @@
 <div class="tool-header" style="text-align: center; margin-bottom: 30px;">
-    <h2><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-hourglass-half') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Countdown Timer') ?></h2>
+    <h1><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-hourglass-half') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Countdown Timer') ?></h1>
     <p style="color: var(--color-text-secondary);"><?= htmlspecialchars($tool['description'] ?? 'Set a countdown timer with quick duration presets and a buzzer alarm.') ?></p>
 </div>
 

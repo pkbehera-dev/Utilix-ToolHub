@@ -1,5 +1,5 @@
 <div class="tool-header" style="text-align: center; margin-bottom: 30px;">
-    <h2><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-stopwatch') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Stopwatch') ?></h2>
+    <h1><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-stopwatch') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Stopwatch') ?></h1>
     <p style="color: var(--color-text-secondary);"><?= htmlspecialchars($tool['description'] ?? 'Measure elapsed time with precision millisecond tracking and lap logging.') ?></p>
 </div>
 

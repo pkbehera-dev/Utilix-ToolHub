@@ -224,6 +224,17 @@ main {
     border-bottom: 1px solid var(--color-border);
 }
 
+.tool-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+}
+.tool-header h1 i {
+    color: var(--color-primary);
+    margin-right: 0.25rem;
+}
+
 .tools-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

@@ -1,5 +1,5 @@
 <div class="tool-header" style="text-align: center; margin-bottom: 30px;">
-    <h2><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-business-time') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Pomodoro Timer') ?></h2>
+    <h1><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-business-time') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Pomodoro Timer') ?></h1>
     <p style="color: var(--color-text-secondary);"><?= htmlspecialchars($tool['description'] ?? 'A focus timer with customizable work and break intervals.') ?></p>
 </div>
 

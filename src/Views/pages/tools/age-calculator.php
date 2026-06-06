@@ -1,5 +1,5 @@
 <div class="tool-header" style="text-align: center; margin-bottom: 30px;">
-    <h2><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-cake-candles') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Age Calculator') ?></h2>
+    <h1><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-cake-candles') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Age Calculator') ?></h1>
     <p style="color: var(--color-text-secondary);"><?= htmlspecialchars($tool['description'] ?? 'Calculate your exact age in years, months, and days.') ?></p>
 </div>
 

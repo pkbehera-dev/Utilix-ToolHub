@@ -1,5 +1,5 @@
 <div class="tool-header" style="text-align: center; margin-bottom: 30px;">
-    <h2><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-align-left') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Remove Duplicate Lines') ?></h2>
+    <h1><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-align-left') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Remove Duplicate Lines') ?></h1>
     <p style="color: var(--color-text-secondary);"><?= htmlspecialchars($tool['description'] ?? 'Remove duplicate lines from your text, lists, or code files instantly.') ?></p>
 </div>
 

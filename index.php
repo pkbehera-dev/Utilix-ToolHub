@@ -73,10 +73,14 @@ $router->get('/api/quotes/all', [\App\Controllers\QuoteController::class, 'allAp
 $router->get('/api/speedtest/download', [\App\Controllers\SpeedTestController::class, 'download']);
 $router->post('/api/speedtest/upload', [\App\Controllers\SpeedTestController::class, 'upload']);
 
+// Usage Analytics API
+$router->post('/api/stats/track-time', [\App\Controllers\StatsController::class, 'trackTime']);
+
 // Define Routes - Admin Panel
 $adminPrefix = '/' . \App\Config\App::adminPrefix();
 
 $router->get($adminPrefix . '/dashboard', [\App\Controllers\AdminController::class, 'dashboard']);
+$router->get($adminPrefix . '/stats', [\App\Controllers\AdminController::class, 'stats']);
 
 $router->get($adminPrefix . '/tools', [\App\Controllers\AdminController::class, 'tools']);
 $router->get($adminPrefix . '/tools/edit/{id}', [\App\Controllers\AdminController::class, 'editTool']);
