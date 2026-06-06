@@ -288,6 +288,142 @@ class AdminController {
         }
         exit;
     }
+
+    /**
+     * List and manage Feature Requests
+     */
+    public function features(): void {
+        $db = Database::getConnection();
+        
+        $stmt = $db->query("SELECT * FROM feature_requests ORDER BY is_solved ASC, stars DESC, created_at DESC");
+        $features = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $pageTitle = 'Manage Feature Requests - Admin';
+        $contentView = 'admin/features';
+        
+        require __DIR__ . '/../Views/admin/layout.php';
+    }
+
+    /**
+     * Mark a feature request as solved or active
+     */
+    public function solveFeature(): void {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
+        if (!Security::verifyCsrfToken($_POST['csrf_token'] ?? '')) die("Invalid security token.");
+
+        $id = (int)($_POST['id'] ?? 0);
+        $solve = (int)($_POST['solve'] ?? 0);
+
+        if ($id > 0) {
+            $db = Database::getConnection();
+            $stmt = $db->prepare("UPDATE feature_requests SET is_solved = :solved WHERE id = :id");
+            $stmt->execute([
+                'solved' => $solve,
+                'id' => $id
+            ]);
+        }
+
+        header('Location: ' . App::adminUrl('/features'));
+        exit;
+    }
+
+    /**
+     * Delete a feature request
+     */
+    public function deleteFeature(): void {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
+        if (!Security::verifyCsrfToken($_POST['csrf_token'] ?? '')) die("Invalid security token.");
+
+        $id = (int)($_POST['id'] ?? 0);
+
+        if ($id > 0) {
+            $db = Database::getConnection();
+            $stmt = $db->prepare("DELETE FROM feature_requests WHERE id = :id");
+            $stmt->execute(['id' => $id]);
+        }
+
+        header('Location: ' . App::adminUrl('/features'));
+        exit;
+    }
+
+    /**
+     * List and manage Quote submissions
+     */
+    public function quotes(): void {
+        $db = Database::getConnection();
+        
+        $category = $_GET['category'] ?? 'All';
+        
+        $query = "SELECT * FROM quotes ";
+        $params = [];
+        
+        if (!empty($category) && $category !== 'All') {
+            $query .= "WHERE category = :category ";
+            $params['category'] = $category;
+        }
+        
+        $query .= "ORDER BY is_approved ASC, created_at DESC";
+        
+        $stmt = $db->prepare($query);
+        $stmt->execute($params);
+        $quotes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $pageTitle = 'Manage Quotes - Admin';
+        $contentView = 'admin/quotes';
+        
+        require __DIR__ . '/../Views/admin/layout.php';
+    }
+
+    /**
+     * Toggle approval status of a quote
+     */
+    public function approveQuote(): void {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
+        if (!Security::verifyCsrfToken($_POST['csrf_token'] ?? '')) die("Invalid security token.");
+
+        $id = (int)($_POST['id'] ?? 0);
+        $approve = (int)($_POST['approve'] ?? 0);
+
+        if ($id > 0) {
+            $db = Database::getConnection();
+            $stmt = $db->prepare("UPDATE quotes SET is_approved = :approved WHERE id = :id");
+            $stmt->execute([
+                'approved' => $approve,
+                'id' => $id
+            ]);
+        }
+
+        $category = Security::sanitize($_GET['category'] ?? 'All');
+        header('Location: ' . App::adminUrl('/quotes?category=' . urlencode($category)));
+        exit;
+    }
+
+    /**
+     * Delete one or multiple quotes
+     */
+    public function deleteQuotes(): void {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
+        if (!Security::verifyCsrfToken($_POST['csrf_token'] ?? '')) die("Invalid security token.");
+
+        $ids = $_POST['quote_ids'] ?? [];
+        // Single delete check
+        if (empty($ids) && isset($_POST['id'])) {
+            $ids = [$_POST['id']];
+        }
+
+        if (!empty($ids) && is_array($ids)) {
+            $db = Database::getConnection();
+            $ids = array_map('intval', $ids);
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            
+            $stmt = $db->prepare("DELETE FROM quotes WHERE id IN ($placeholders)");
+            $stmt->execute($ids);
+        }
+
+        $category = Security::sanitize($_GET['category'] ?? 'All');
+        header('Location: ' . App::adminUrl('/quotes?category=' . urlencode($category)));
+        exit;
+    }
 }
 
 

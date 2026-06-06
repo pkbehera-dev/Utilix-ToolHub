@@ -10,6 +10,7 @@ use App\Config\App;
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/svg+xml" href="<?= App::url('assets/favicon.svg') ?>">
     <link rel="stylesheet" href="<?= App::url('assets/css/style.css') ?>?v=<?= App::VERSION ?>">
     <style>
         /* Admin specific styles */
@@ -108,6 +109,8 @@ use App\Config\App;
                     <li><a href="<?= App::adminUrl('/tools') ?>"><i class="fa-solid fa-wrench"></i> Manage Tools</a></li>
                     <li><a href="<?= App::adminUrl('/categories') ?>"><i class="fa-solid fa-tags"></i> Categories</a></li>
                     <li><a href="<?= App::adminUrl('/urls') ?>"><i class="fa-solid fa-link"></i> URL Shortener</a></li>
+                    <li><a href="<?= App::adminUrl('/features') ?>"><i class="fa-solid fa-lightbulb"></i> Feature Requests</a></li>
+                    <li><a href="<?= App::adminUrl('/quotes') ?>"><i class="fa-solid fa-quote-left"></i> Manage Quotes</a></li>
                     <li><a href="<?= App::adminUrl('/settings') ?>"><i class="fa-solid fa-gear"></i> Settings</a></li>
                     <li><a href="<?= App::url('/logout') ?>"><i class="fa-solid fa-sign-out-alt"></i> Logout</a></li>
                     <li><a href="<?= App::url('/') ?>" target="_blank"><i class="fa-solid fa-external-link-alt"></i> Visit Site</a></li>
