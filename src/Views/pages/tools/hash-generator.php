@@ -1,5 +1,5 @@
 <div class="tool-header" style="text-align: center; margin-bottom: 30px;">
-    <h2><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-hashtag') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Hash Generator') ?></h2>
+    <h1><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-hashtag') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Hash Generator') ?></h1>
     <p style="color: var(--color-text-secondary);"><?= htmlspecialchars($tool['description'] ?? 'Generate cryptographic hashes (MD5, SHA1, SHA256) from input text.') ?></p>
 </div>
 

@@ -8,110 +8,58 @@ try {
     
     $db = \App\Config\Database::getConnection();
 
-    // 1. Database Table & Column Alterations
     try {
-        $db->exec("ALTER TABLE short_urls ADD COLUMN alias VARCHAR(50) UNIQUE NULL AFTER short_code");
-        echo "Ensured alias column exists in short_urls table.\n";
-    } catch (PDOException $e) {
-        // Silently catch if column already exists
-    }
-
-    // 2. Clean up retired tools
-    $retiredSlugs = ['percentage-calculator', 'discount-calculator', 'slug-generator', 'uuid-generator'];
-    $placeholders = implode(',', array_fill(0, count($retiredSlugs), '?'));
-    $stmtDel = $db->prepare("DELETE FROM tools WHERE slug IN ($placeholders)");
-    $stmtDel->execute($retiredSlugs);
-    echo "Removed retired tools from database.\n";
-
-    // 3. Define and Register New Tools
-    $newTools = [
-        'utilities' => [
-            [
-                'name' => 'Random Number Generator',
-                'slug' => 'random-number-generator',
-                'description' => 'Generate a random number within a chosen range with customizable animations.',
-                'icon' => 'fa-dice',
-            ]
-        ],
-        'developer-tools' => [
-            [
-                'name' => 'Hash Generator',
-                'slug' => 'hash-generator',
-                'description' => 'Generate cryptographic hashes including MD5, SHA1, and SHA256.',
-                'icon' => 'fa-hashtag',
-            ]
-        ],
-        'calculators' => [
-            [
-                'name' => 'Age Calculator',
-                'slug' => 'age-calculator',
-                'description' => 'Calculate your exact age in years, months, and days with breakdown stats.',
-                'icon' => 'fa-cake-candles',
-            ],
-            [
-                'name' => 'GST Calculator',
-                'slug' => 'gst-calculator',
-                'description' => 'Calculate Goods and Services Tax (GST) adding or removing values with CGST/SGST splits.',
-                'icon' => 'fa-calculator',
-            ],
-            [
-                'name' => 'BMI Calculator',
-                'slug' => 'bmi-calculator',
-                'description' => 'Calculate Body Mass Index (BMI) and determine healthy weight classifications.',
-                'icon' => 'fa-heart-pulse',
-            ]
-        ],
-        'fun-tools' => [
-            [
-                'name' => 'Coin Flip',
-                'slug' => 'coin-flip',
-                'description' => 'Flip a virtual coin to make random binary decisions.',
-                'icon' => 'fa-circle-dot',
-            ],
-            [
-                'name' => 'Dice Roller',
-                'slug' => 'dice-roller',
-                'description' => 'Roll one or multiple virtual 3D dice for games and decisions.',
-                'icon' => 'fa-dice',
-            ]
-        ],
-        'text-tools' => [
-            [
-                'name' => 'Remove Duplicate Lines',
-                'slug' => 'remove-duplicate-lines',
-                'description' => 'Remove duplicate lines from text blocks or lists instantly.',
-                'icon' => 'fa-align-left',
-            ]
-        ]
-    ];
-
-    $stmtCat = $db->prepare("SELECT id FROM categories WHERE slug = ?");
-    $stmtTool = $db->prepare("INSERT IGNORE INTO tools (category_id, name, slug, description, icon, meta_title, meta_description) VALUES (?, ?, ?, ?, ?, ?, ?)");
-
-    foreach ($newTools as $catSlug => $tools) {
-        $stmtCat->execute([$catSlug]);
+        // Find Category ID for utilities
+        $stmtCat = $db->prepare("SELECT id FROM categories WHERE slug = ?");
+        $stmtCat->execute(['utilities']);
         $catId = $stmtCat->fetchColumn();
-        
+
         if ($catId) {
-            foreach ($tools as $t) {
-                $metaTitle = $t['name'] . ' - ToolBox';
-                $metaDesc = $t['description'];
-                
-                $stmtTool->execute([
-                    $catId,
-                    $t['name'],
-                    $t['slug'],
-                    $t['description'],
-                    $t['icon'],
-                    $metaTitle,
-                    $metaDesc
-                ]);
-                echo "Registered tool: {$t['name']} under category '{$catSlug}'.\n";
-            }
+            $stmtTool = $db->prepare("INSERT IGNORE INTO tools (category_id, name, slug, description, icon, meta_title, meta_description) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmtTool->execute([
+                $catId,
+                'Unit Converter',
+                'unit-converter',
+                'Convert between various measurement units including length, weight, temperature, area, and volume instantly.',
+                'fa-scale-balanced',
+                'Unit Converter - UtiliX',
+                'Convert between various measurement units including length, weight, temperature, area, and volume instantly.'
+            ]);
+            echo "Registered tool: Unit Converter under category 'utilities'.\n";
+        } else {
+            echo "Category 'utilities' not found.\n";
         }
+    } catch (PDOException $e) {
+        echo "Database error: " . $e->getMessage() . "\n";
     }
 
-    echo "\nDatabase updated successfully.\n";
+    try {
+        // Create tool_usage_stats table
+        $db->exec("CREATE TABLE IF NOT EXISTS tool_usage_stats (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            tool_id INT NOT NULL,
+            total_views INT DEFAULT 0,
+            recurring_views INT DEFAULT 0,
+            total_users INT DEFAULT 0,
+            total_seconds BIGINT DEFAULT 0,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (tool_id) REFERENCES tools(id) ON DELETE CASCADE,
+            UNIQUE KEY unique_tool (tool_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        echo "Ensured tool_usage_stats table exists.\n";
+
+        // Migrate views from tools table to tool_usage_stats table if stats table is empty
+        $countStats = $db->query("SELECT COUNT(*) FROM tool_usage_stats")->fetchColumn();
+        if ($countStats == 0) {
+            $db->exec("INSERT INTO tool_usage_stats (tool_id, total_views, total_users) 
+                       SELECT id, views, views FROM tools WHERE views > 0");
+            echo "Migrated historical view counts from tools to tool_usage_stats.\n";
+        }
+    } catch (PDOException $e) {
+        echo "Database migration error: " . $e->getMessage() . "\n";
+    }
+
+    echo "Database migration checked. No pending updates.\n";
 
 } catch (Exception $e) {
     die("Error updating database: " . $e->getMessage());

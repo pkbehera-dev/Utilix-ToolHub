@@ -1,5 +1,5 @@
 <div class="tool-header" style="text-align: center; margin-bottom: 30px;">
-    <h2><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-calculator') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'GST Calculator') ?></h2>
+    <h1><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-calculator') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'GST Calculator') ?></h1>
     <p style="color: var(--color-text-secondary);"><?= htmlspecialchars($tool['description'] ?? 'Calculate Goods and Services Tax (GST) values with CGST and SGST splits.') ?></p>
 </div>
 

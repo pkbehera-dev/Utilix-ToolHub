@@ -64,10 +64,23 @@ $router->get('/logout', [\App\Controllers\AuthController::class, 'logout']);
 // URL Shortener API
 $router->post('/api/shorten', [\App\Controllers\UrlController::class, 'shorten']);
 
+// Quote Generator APIs
+$router->post('/api/quotes/add', [\App\Controllers\QuoteController::class, 'add']);
+$router->get('/api/quotes/generate', [\App\Controllers\QuoteController::class, 'generate']);
+$router->get('/api/quotes/all', [\App\Controllers\QuoteController::class, 'allApproved']);
+
+// Speed Test APIs
+$router->get('/api/speedtest/download', [\App\Controllers\SpeedTestController::class, 'download']);
+$router->post('/api/speedtest/upload', [\App\Controllers\SpeedTestController::class, 'upload']);
+
+// Usage Analytics API
+$router->post('/api/stats/track-time', [\App\Controllers\StatsController::class, 'trackTime']);
+
 // Define Routes - Admin Panel
 $adminPrefix = '/' . \App\Config\App::adminPrefix();
 
 $router->get($adminPrefix . '/dashboard', [\App\Controllers\AdminController::class, 'dashboard']);
+$router->get($adminPrefix . '/stats', [\App\Controllers\AdminController::class, 'stats']);
 
 $router->get($adminPrefix . '/tools', [\App\Controllers\AdminController::class, 'tools']);
 $router->get($adminPrefix . '/tools/edit/{id}', [\App\Controllers\AdminController::class, 'editTool']);
@@ -82,12 +95,27 @@ $router->get($adminPrefix . '/settings', [\App\Controllers\AdminController::clas
 $router->post($adminPrefix . '/settings/password', [\App\Controllers\AdminController::class, 'updatePassword']);
 $router->post($adminPrefix . '/urls/delete', [\App\Controllers\AdminController::class, 'deleteUrls']);
 
+// Admin - Feature Requests Management
+$router->get($adminPrefix . '/features', [\App\Controllers\AdminController::class, 'features']);
+$router->post($adminPrefix . '/features/solve', [\App\Controllers\AdminController::class, 'solveFeature']);
+$router->post($adminPrefix . '/features/delete', [\App\Controllers\AdminController::class, 'deleteFeature']);
+
+// Admin - Quotes Management
+$router->get($adminPrefix . '/quotes', [\App\Controllers\AdminController::class, 'quotes']);
+$router->post($adminPrefix . '/quotes/approve', [\App\Controllers\AdminController::class, 'approveQuote']);
+$router->post($adminPrefix . '/quotes/delete', [\App\Controllers\AdminController::class, 'deleteQuotes']);
+
 
 
 
 // Get requested URI
 $requestUri = $_SERVER['REQUEST_URI'];
 $requestMethod = $_SERVER['REQUEST_METHOD'];
+
+// Feature Request Community Routes
+$router->get('/features', [\App\Controllers\FeatureController::class, 'index']);
+$router->post('/features/add', [\App\Controllers\FeatureController::class, 'add']);
+$router->post('/features/star', [\App\Controllers\FeatureController::class, 'star']);
 
 // Dynamic Short URL route - MUST BE LAST so it doesn't override other routes
 $router->get('/{short_code}', [\App\Controllers\UrlController::class, 'redirect']);

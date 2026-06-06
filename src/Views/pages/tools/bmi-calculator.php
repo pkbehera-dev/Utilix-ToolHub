@@ -1,5 +1,5 @@
 <div class="tool-header" style="text-align: center; margin-bottom: 30px;">
-    <h2><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-heart-pulse') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'BMI Calculator') ?></h2>
+    <h1><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-heart-pulse') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'BMI Calculator') ?></h1>
     <p style="color: var(--color-text-secondary);"><?= htmlspecialchars($tool['description'] ?? 'Calculate Body Mass Index (BMI) and determine weight classification.') ?></p>
 </div>
 

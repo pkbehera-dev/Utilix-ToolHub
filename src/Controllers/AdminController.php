@@ -29,8 +29,13 @@ class AdminController {
             'total_tools' => $db->query("SELECT COUNT(*) FROM tools")->fetchColumn(),
             'active_tools' => $db->query("SELECT COUNT(*) FROM tools WHERE is_active = 1")->fetchColumn(),
             'total_categories' => $db->query("SELECT COUNT(*) FROM categories")->fetchColumn(),
-            'total_tool_views' => $db->query("SELECT SUM(views) FROM tools")->fetchColumn() ?: 0,
-            'most_popular_tool' => $db->query("SELECT name, views FROM tools ORDER BY views DESC LIMIT 1")->fetch(),
+            'total_tool_views' => $db->query("SELECT SUM(total_views) FROM tool_usage_stats")->fetchColumn() ?: 0,
+            'most_popular_tool' => $db->query("
+                SELECT t.name, COALESCE(s.total_views, 0) AS views 
+                FROM tools t 
+                LEFT JOIN tool_usage_stats s ON t.id = s.tool_id 
+                ORDER BY views DESC LIMIT 1
+            ")->fetch(),
             'total_short_urls' => $db->query("SELECT COUNT(*) FROM short_urls")->fetchColumn()
         ];
         
@@ -44,6 +49,54 @@ class AdminController {
         $pageTitle = 'Dashboard - ' . App::siteName() . ' Admin';
         $contentView = 'admin/dashboard';
         
+        require __DIR__ . '/../Views/admin/layout.php';
+    }
+
+    /**
+     * Usage Analytics Panel
+     */
+    public function stats(): void {
+        $db = Database::getConnection();
+        
+        // Fetch all tools joined with usage statistics
+        $stmt = $db->query("
+            SELECT t.name, t.slug, c.name as category_name,
+                   COALESCE(s.total_views, 0) AS total_views,
+                   COALESCE(s.recurring_views, 0) AS recurring_views,
+                   COALESCE(s.total_users, 0) AS total_users,
+                   COALESCE(s.total_seconds, 0) AS total_seconds
+            FROM tools t
+            JOIN categories c ON t.category_id = c.id
+            LEFT JOIN tool_usage_stats s ON t.id = s.tool_id
+            ORDER BY total_views DESC, t.name ASC
+        ");
+        $analytics = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Calculate site-wide metrics
+        $siteStats = [
+            'total_views' => 0,
+            'total_recurring' => 0,
+            'total_users' => 0,
+            'total_seconds' => 0,
+            'top_tool' => 'None',
+            'top_tool_views' => 0
+        ];
+
+        foreach ($analytics as $row) {
+            $siteStats['total_views'] += $row['total_views'];
+            $siteStats['total_recurring'] += $row['recurring_views'];
+            $siteStats['total_users'] += $row['total_users'];
+            $siteStats['total_seconds'] += $row['total_seconds'];
+            
+            if ($row['total_views'] > $siteStats['top_tool_views']) {
+                $siteStats['top_tool'] = $row['name'];
+                $siteStats['top_tool_views'] = $row['total_views'];
+            }
+        }
+
+        $pageTitle = 'Usage Analytics - Admin';
+        $contentView = 'admin/stats';
+
         require __DIR__ . '/../Views/admin/layout.php';
     }
 
@@ -286,6 +339,142 @@ class AdminController {
         } else {
             header('Location: ' . App::adminUrl('/settings?error=invalid_password'));
         }
+        exit;
+    }
+
+    /**
+     * List and manage Feature Requests
+     */
+    public function features(): void {
+        $db = Database::getConnection();
+        
+        $stmt = $db->query("SELECT * FROM feature_requests ORDER BY is_solved ASC, stars DESC, created_at DESC");
+        $features = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $pageTitle = 'Manage Feature Requests - Admin';
+        $contentView = 'admin/features';
+        
+        require __DIR__ . '/../Views/admin/layout.php';
+    }
+
+    /**
+     * Mark a feature request as solved or active
+     */
+    public function solveFeature(): void {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
+        if (!Security::verifyCsrfToken($_POST['csrf_token'] ?? '')) die("Invalid security token.");
+
+        $id = (int)($_POST['id'] ?? 0);
+        $solve = (int)($_POST['solve'] ?? 0);
+
+        if ($id > 0) {
+            $db = Database::getConnection();
+            $stmt = $db->prepare("UPDATE feature_requests SET is_solved = :solved WHERE id = :id");
+            $stmt->execute([
+                'solved' => $solve,
+                'id' => $id
+            ]);
+        }
+
+        header('Location: ' . App::adminUrl('/features'));
+        exit;
+    }
+
+    /**
+     * Delete a feature request
+     */
+    public function deleteFeature(): void {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
+        if (!Security::verifyCsrfToken($_POST['csrf_token'] ?? '')) die("Invalid security token.");
+
+        $id = (int)($_POST['id'] ?? 0);
+
+        if ($id > 0) {
+            $db = Database::getConnection();
+            $stmt = $db->prepare("DELETE FROM feature_requests WHERE id = :id");
+            $stmt->execute(['id' => $id]);
+        }
+
+        header('Location: ' . App::adminUrl('/features'));
+        exit;
+    }
+
+    /**
+     * List and manage Quote submissions
+     */
+    public function quotes(): void {
+        $db = Database::getConnection();
+        
+        $category = $_GET['category'] ?? 'All';
+        
+        $query = "SELECT * FROM quotes ";
+        $params = [];
+        
+        if (!empty($category) && $category !== 'All') {
+            $query .= "WHERE category = :category ";
+            $params['category'] = $category;
+        }
+        
+        $query .= "ORDER BY is_approved ASC, created_at DESC";
+        
+        $stmt = $db->prepare($query);
+        $stmt->execute($params);
+        $quotes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $pageTitle = 'Manage Quotes - Admin';
+        $contentView = 'admin/quotes';
+        
+        require __DIR__ . '/../Views/admin/layout.php';
+    }
+
+    /**
+     * Toggle approval status of a quote
+     */
+    public function approveQuote(): void {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
+        if (!Security::verifyCsrfToken($_POST['csrf_token'] ?? '')) die("Invalid security token.");
+
+        $id = (int)($_POST['id'] ?? 0);
+        $approve = (int)($_POST['approve'] ?? 0);
+
+        if ($id > 0) {
+            $db = Database::getConnection();
+            $stmt = $db->prepare("UPDATE quotes SET is_approved = :approved WHERE id = :id");
+            $stmt->execute([
+                'approved' => $approve,
+                'id' => $id
+            ]);
+        }
+
+        $category = Security::sanitize($_GET['category'] ?? 'All');
+        header('Location: ' . App::adminUrl('/quotes?category=' . urlencode($category)));
+        exit;
+    }
+
+    /**
+     * Delete one or multiple quotes
+     */
+    public function deleteQuotes(): void {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
+        if (!Security::verifyCsrfToken($_POST['csrf_token'] ?? '')) die("Invalid security token.");
+
+        $ids = $_POST['quote_ids'] ?? [];
+        // Single delete check
+        if (empty($ids) && isset($_POST['id'])) {
+            $ids = [$_POST['id']];
+        }
+
+        if (!empty($ids) && is_array($ids)) {
+            $db = Database::getConnection();
+            $ids = array_map('intval', $ids);
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            
+            $stmt = $db->prepare("DELETE FROM quotes WHERE id IN ($placeholders)");
+            $stmt->execute($ids);
+        }
+
+        $category = Security::sanitize($_GET['category'] ?? 'All');
+        header('Location: ' . App::adminUrl('/quotes?category=' . urlencode($category)));
         exit;
     }
 }

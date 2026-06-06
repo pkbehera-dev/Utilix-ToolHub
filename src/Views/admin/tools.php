@@ -18,7 +18,6 @@
                     <th style="padding: 0.75rem 1rem;">Tool Name</th>
                     <th style="padding: 0.75rem 1rem;">Category</th>
                     <th style="padding: 0.75rem 1rem;">Slug</th>
-                    <th style="padding: 0.75rem 1rem;">Views</th>
                     <th style="padding: 0.75rem 1rem;">Status</th>
                     <th style="padding: 0.75rem 1rem; text-align: right;">Actions</th>
                 </tr>
@@ -37,7 +36,6 @@
                             </td>
                             <td style="padding: 1rem; color: var(--color-text-secondary);"><?= htmlspecialchars($tool['category_name']) ?></td>
                             <td style="padding: 1rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--color-text-secondary);">/tool/<?= htmlspecialchars($tool['slug']) ?></td>
-                            <td style="padding: 1rem; font-weight: 600;"><?= number_format($tool['views']) ?></td>
                             <td style="padding: 1rem;">
                                 <?php if ($tool['is_active']): ?>
                                     <span style="display: inline-block; padding: 0.125rem 0.5rem; font-size: 0.75rem; font-weight: 600; color: var(--color-success); background: color-mix(in srgb, var(--color-success) 10%, transparent); border-radius: var(--radius-full);">Active</span>

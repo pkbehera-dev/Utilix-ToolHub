@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- High contrast background disk to guarantee visibility on any browser theme -->
+  <circle cx="256" cy="256" r="240" fill="#1e1e24" />
+  
+  <!-- Thick, high-contrast tool silhouette -->
+  <g transform="rotate(-45 256 256)">
+    <!-- Wrench Body -->
+    <rect x="226" y="120" width="60" height="272" rx="10" fill="#00ffcc" />
+    <!-- Top Wrench Head -->
+    <circle cx="256" cy="120" r="70" fill="#00ffcc" />
+    <polygon points="216,50 296,50 256,110" fill="#1e1e24" />
+    <!-- Bottom Wrench Head -->
+    <circle cx="256" cy="392" r="70" fill="#00ffcc" />
+    <polygon points="216,462 296,462 256,402" fill="#1e1e24" />
+  </g>
+  
+  <!-- Central High-Contrast Lightning Accent -->
+  <polygon points="270,160 190,270 260,270 240,360 320,250 250,250" fill="#ffffff" />
+</svg>

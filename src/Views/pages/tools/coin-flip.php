@@ -1,5 +1,5 @@
 <div class="tool-header" style="text-align: center; margin-bottom: 30px;">
-    <h2><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-circle-dot') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Coin Flip') ?></h2>
+    <h1><i class="fa-solid <?= htmlspecialchars($tool['icon'] ?? 'fa-circle-dot') ?>"></i> <?= htmlspecialchars($tool['name'] ?? 'Coin Flip') ?></h1>
     <p style="color: var(--color-text-secondary);"><?= htmlspecialchars($tool['description'] ?? 'Flip a virtual coin to make random decisions.') ?></p>
 </div>
 

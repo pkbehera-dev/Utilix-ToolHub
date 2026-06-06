@@ -65,8 +65,8 @@ class Router {
 
         // 404 Not Found
         http_response_code(404);
-        $pageTitle = 'Page Not Found - ToolBox';
-        $metaDescription = 'The page you are looking for does not exist on ToolBox.';
+        $pageTitle = 'Page Not Found - ' . \App\Config\App::siteName();
+        $metaDescription = 'The page you are looking for does not exist on ' . \App\Config\App::siteName() . '.';
         $contentView = 'pages/404';
         require __DIR__ . '/../Views/layout.php';
     }
