@@ -57,6 +57,7 @@
     height: 100%;
     position: relative;
     transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
     transition: transform 1.2s cubic-bezier(0.15, 0.85, 0.35, 1.15);
 }
 
@@ -73,6 +74,8 @@
     padding: 6px;
     box-sizing: border-box;
     box-shadow: inset 0 0 8px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.15);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .pip {

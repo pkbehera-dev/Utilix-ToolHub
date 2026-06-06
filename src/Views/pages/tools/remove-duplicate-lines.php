@@ -126,8 +126,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!seen.has(compareKey)) {
                 seen.add(compareKey);
-                // Keep original casing in output
-                uniqueLines.push(line);
+                // Keep original casing in output (and trim if requested)
+                uniqueLines.push(optTrim.checked ? processedLine : line);
             }
         });
 
