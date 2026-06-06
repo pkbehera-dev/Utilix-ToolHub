@@ -50,6 +50,39 @@ class AuthController {
             return;
         }
 
+        // reCAPTCHA verification
+        $recaptchaResponse = $_POST['g-recaptcha-response'] ?? '';
+        $recaptchaSecret = $_ENV['RECAPTCHA_SECRET_KEY'] ?? '';
+        if (!empty($recaptchaSecret)) {
+            if (empty($recaptchaResponse)) {
+                $error = "reCAPTCHA verification is required.";
+                require __DIR__ . '/../Views/admin/login.php';
+                return;
+            }
+            $verifyUrl = "https://www.google.com/recaptcha/api/siteverify";
+            $verifyData = [
+                'secret' => $recaptchaSecret,
+                'response' => $recaptchaResponse,
+                'remoteip' => RateLimiter::getIpAddress()
+            ];
+            $options = [
+                'http' => [
+                    'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+                    'method'  => 'POST',
+                    'content' => http_build_query($verifyData),
+                    'timeout' => 5
+                ]
+            ];
+            $context  = stream_context_create($options);
+            $response = @file_get_contents($verifyUrl, false, $context);
+            $responseData = json_decode($response, true);
+            if (!$responseData || !isset($responseData['success']) || !$responseData['success']) {
+                $error = "reCAPTCHA verification failed. Please try again.";
+                require __DIR__ . '/../Views/admin/login.php';
+                return;
+            }
+        }
+
         $username = Security::sanitize($_POST['username'] ?? '');
         $password = $_POST['password'] ?? '';
         $ip = RateLimiter::getIpAddress();
