@@ -1,4 +1,5 @@
 <?php
+define('SECURE_ACCESS', true);
 /**
  * ToolBox Front Controller
  * All frontend requests are routed through here.

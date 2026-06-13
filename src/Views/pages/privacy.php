@@ -1,4 +1,8 @@
 <?php
+if (!defined('SECURE_ACCESS')) {
+    http_response_code(403);
+    die('Direct access not allowed.');
+}
 /**
  * Privacy Policy Page
  */
@@ -80,7 +84,8 @@
                 <h2>7. Contact Us</h2>
                 <p>If you have any questions or concerns about this Privacy Policy, please reach out to us:</p>
                 <p><strong>Email:</strong> <?= htmlspecialchars(\App\Config\App::supportEmail()) ?></p>
-                <p><strong>Address:</strong> <?= htmlspecialchars(\App\Config\App::siteName()) ?> Solutions Inc., 123 Dev Lane, Tech Suite 404</p>
+                <p><strong>Telegram:</strong> <a href="https://t.me/pkbehera_dev" target="_blank" rel="noopener noreferrer">@pkbehera_dev</a></p>
+                <p><strong>Address:</strong> Odisha, India</p>
             </section>
         </article>
     </div>

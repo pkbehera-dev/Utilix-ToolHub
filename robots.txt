@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+Disallow: /login
+Disallow: /logout
+
+Sitemap: http://localhost/ToolBox/sitemap.xml

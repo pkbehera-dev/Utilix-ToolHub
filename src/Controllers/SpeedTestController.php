@@ -28,12 +28,26 @@ class SpeedTestController {
         header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
         header('Content-Transfer-Encoding: binary');
 
-        // Output 10MB of random bytes instantly (avoids loop and flush stalls on Windows/Apache)
-        try {
-            echo random_bytes(10 * 1024 * 1024); // 10MB
-        } catch (\Exception $e) {
-            // Fallback
-            echo str_repeat('A', 10 * 1024 * 1024);
+        // Continuous streaming loop for up to 10 seconds
+        $startTime = microtime(true);
+        $chunkSize = 256 * 1024; // 256KB chunks
+
+        // Output headers immediately
+        flush();
+
+        while (true) {
+            // Stop if client disconnected or 10-second limit reached
+            if (connection_aborted() || (microtime(true) - $startTime) > 10.0) {
+                break;
+            }
+
+            try {
+                echo random_bytes($chunkSize);
+            } catch (\Exception $e) {
+                echo str_repeat('A', $chunkSize);
+            }
+
+            flush();
         }
         exit;
     }

@@ -1,4 +1,8 @@
 <?php
+if (!defined('SECURE_ACCESS')) {
+    http_response_code(403);
+    die('Direct access not allowed.');
+}
 /**
  * Terms of Service Page
  */
@@ -20,6 +24,7 @@
                 <a href="#limitations" class="nav-link">5. Limitations</a>
                 <a href="#governing-law" class="nav-link">6. Governing Law</a>
                 <a href="#modifications" class="nav-link">7. Modifications</a>
+                <a href="#contact" class="nav-link">8. Contact Us</a>
             </nav>
         </aside>
 
@@ -73,6 +78,14 @@
                 <h2>7. Modifications to Terms</h2>
                 <p>We may revise these terms of service for our website at any time without notice. By using this website, you are agreeing to be bound by the then-current version of these Terms of Service.</p>
                 <p>We recommend checking this page periodically to remain informed of any changes.</p>
+            </section>
+
+            <section id="contact">
+                <h2>8. Contact Us</h2>
+                <p>If you have any questions or concerns about these Terms of Service, please reach out to us:</p>
+                <p><strong>Email:</strong> <?= htmlspecialchars(\App\Config\App::supportEmail()) ?></p>
+                <p><strong>Telegram:</strong> <a href="https://t.me/pkbehera_dev" target="_blank" rel="noopener noreferrer">@pkbehera_dev</a></p>
+                <p><strong>Address:</strong> Odisha, India</p>
             </section>
         </article>
     </div>

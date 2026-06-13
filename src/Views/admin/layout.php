@@ -1,4 +1,8 @@
 <?php
+if (!defined('SECURE_ACCESS')) {
+    http_response_code(403);
+    die('Direct access not allowed.');
+}
 use App\Config\App;
 ?>
 <!DOCTYPE html>
