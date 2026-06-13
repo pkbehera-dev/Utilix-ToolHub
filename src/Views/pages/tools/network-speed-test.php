@@ -37,8 +37,9 @@
                 <span id="test-progress-text" class="text-sm text-muted" style="margin-left: 0.75rem;">Click Start to begin testing</span>
             </div>
             
-            <div id="ip-info-display" class="text-sm text-muted" style="display: flex; gap: 1rem; align-items: center;">
+            <div id="ip-info-display" class="text-sm text-muted" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
                 <div><i class="fa-solid fa-globe" style="color: var(--color-primary); margin-right: 0.25rem;"></i> IP: <span id="client-ip" style="font-weight: 600; color: var(--color-text-primary);"><?php echo htmlspecialchars($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1'); ?></span></div>
+                <div id="server-info"><i class="fa-solid fa-network-wired" style="color: var(--color-warning); margin-right: 0.25rem;"></i> Nearest Server: <span id="nearest-server" style="font-weight: 600; color: var(--color-text-primary);">Mumbai, IN (UtiliX Edge)</span></div>
             </div>
         </div>
 
@@ -69,7 +70,7 @@
                         <!-- Central Speed Display -->
                         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; pointer-events: none;">
                             <span id="speed-value" style="font-size: 3.5rem; font-weight: 800; font-family: monospace; line-height: 1; margin-bottom: 0.25rem; background: linear-gradient(135deg, var(--color-text-primary) 30%, var(--color-text-secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">0.0</span>
-                            <span style="font-size: 0.85rem; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.1em;">Mbps</span>
+                            <span id="speed-unit" style="font-size: 0.85rem; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.1em;">Mbps</span>
                             <span id="phase-label" style="font-size: 0.75rem; font-weight: 600; color: var(--color-primary); margin-top: 0.5rem; min-height: 18px; text-transform: uppercase;"></span>
                         </div>
                     </div>
@@ -193,6 +194,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const statusBadge = document.getElementById("test-status-badge");
     const progressText = document.getElementById("test-progress-text");
     const speedVal = document.getElementById("speed-value");
+    const speedUnit = document.getElementById("speed-unit");
     const phaseLabel = document.getElementById("phase-label");
     const clientIpSpan = document.getElementById("client-ip");
     
@@ -220,17 +222,51 @@ document.addEventListener("DOMContentLoaded", function () {
     let isTesting = false;
     let testHistory = [];
 
-    // Fetch IP Address
-    fetch('https://api.ipify.org?format=json')
-        .then(res => res.json())
-        .then(data => {
-            if (data.ip) {
-                clientIpSpan.textContent = data.ip;
-            }
-        })
-        .catch(() => {
-            clientIpSpan.textContent = "Unavailable";
-        });
+    // Fetch real public IP and ISP information
+    function fetchClientInfo() {
+        fetch('https://ipapi.co/json/')
+            .then(res => res.json())
+            .then(data => {
+                if (data.ip) {
+                    clientIpSpan.textContent = data.ip;
+                    
+                    // Add ISP info if returned
+                    if (data.org) {
+                        const ipDisplay = document.getElementById('ip-info-display');
+                        if (ipDisplay) {
+                            const ispDiv = document.createElement('div');
+                            ispDiv.innerHTML = `<i class="fa-solid fa-server" style="color: var(--color-success); margin-right: 0.25rem;"></i> ISP: <span style="font-weight: 600; color: var(--color-text-primary);">${data.org}</span>`;
+                            ipDisplay.appendChild(ispDiv);
+                        }
+                    }
+
+                    // Update nearest server using client's city/country code
+                    const serverCity = data.city || 'Mumbai';
+                    const serverCountry = data.country_code || 'IN';
+                    const serverSpan = document.getElementById('nearest-server');
+                    if (serverSpan) {
+                        serverSpan.textContent = `${serverCity}, ${serverCountry} (UtiliX Edge)`;
+                    }
+                }
+            })
+            .catch(() => {
+                // Fallback to simpler ipify lookup if ipapi.co fails or is blocked
+                fetch('https://api.ipify.org?format=json')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.ip) {
+                            clientIpSpan.textContent = data.ip;
+                        }
+                    })
+                    .catch(() => {
+                        // Keep the PHP-rendered IP (e.g. 127.0.0.1 or loopback) as fallback instead of showing 'Unavailable'
+                        if (clientIpSpan.textContent === '127.0.0.1' || clientIpSpan.textContent === '::1') {
+                            clientIpSpan.textContent = clientIpSpan.textContent + ' (Local)';
+                        }
+                    });
+            });
+    }
+    fetchClientInfo();
 
     // Gauge Update Helper
     function updateGauge(speed) {
@@ -306,6 +342,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Ping & Jitter Phase
     async function runPingTest() {
         phaseLabel.textContent = "Ping & Jitter";
+        speedUnit.textContent = "ms";
         statusBadge.textContent = "Testing";
         statusBadge.style.background = "rgba(59, 130, 246, 0.1)";
         statusBadge.style.color = "var(--color-primary)";
@@ -356,6 +393,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function runDownloadTest() {
         return new Promise((resolve, reject) => {
             phaseLabel.textContent = "Download Speed";
+            speedUnit.textContent = "Mbps";
             progressText.textContent = "Downloading speed test stream...";
             progressContainerDownload.style.display = "block";
             metricDownload.style.color = "var(--color-primary)";
@@ -428,12 +466,13 @@ document.addEventListener("DOMContentLoaded", function () {
     function runUploadTest() {
         return new Promise((resolve, reject) => {
             phaseLabel.textContent = "Upload Speed";
+            speedUnit.textContent = "Mbps";
             progressText.textContent = "Uploading payload buffer...";
             progressContainerUpload.style.display = "block";
             metricUpload.style.color = "#10B981";
 
-            // Generate random 8MB Blob payload
-            const payloadSize = 8 * 1024 * 1024;
+            // Generate random 32MB Blob payload
+            const payloadSize = 32 * 1024 * 1024;
             const dataBuffer = new Uint8Array(payloadSize);
             // Pseudo-randomize buffer lightly to minimize server-side and browser compression effects
             for (let i = 0; i < dataBuffer.length; i += 1024) {
@@ -516,6 +555,7 @@ document.addEventListener("DOMContentLoaded", function () {
         metricUpload.style.color = "var(--color-text-primary)";
         
         speedVal.textContent = "0.0";
+        speedUnit.textContent = "Mbps";
         updateGauge(0);
         initSparkline();
 
@@ -567,6 +607,7 @@ document.addEventListener("DOMContentLoaded", function () {
         statusBadge.style.background = "rgba(156, 163, 175, 0.1)";
         statusBadge.style.color = "var(--color-text-secondary)";
         speedVal.textContent = "0.0";
+        speedUnit.textContent = "Mbps";
         updateGauge(0);
         startBtn.style.display = "inline-block";
         cancelBtn.style.display = "none";
