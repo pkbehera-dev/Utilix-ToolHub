@@ -109,32 +109,29 @@ class HomeController {
             return;
         }
         
-        // Update views counter for users (excluding admins)
+        // Update views counter for users
         \App\Core\Security::startSession();
-        $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
-        if (!$isAdmin) {
-            $toolId = (int)$tool['id'];
-            $cookieName = 'visited_tool_' . $toolId;
-            if (isset($_COOKIE[$cookieName])) {
-                // Recurring view
-                $db->prepare("
-                    INSERT INTO tool_usage_stats (tool_id, total_views, recurring_views, total_users, total_seconds)
-                    VALUES (:tool_id, 1, 1, 0, 0)
-                    ON DUPLICATE KEY UPDATE 
-                        total_views = total_views + 1,
-                        recurring_views = recurring_views + 1
-                ")->execute(['tool_id' => $toolId]);
-            } else {
-                // New unique user view
-                setcookie($cookieName, '1', time() + (30 * 24 * 60 * 60), '/'); // 30 days
-                $db->prepare("
-                    INSERT INTO tool_usage_stats (tool_id, total_views, recurring_views, total_users, total_seconds)
-                    VALUES (:tool_id, 1, 0, 1, 0)
-                    ON DUPLICATE KEY UPDATE 
-                        total_views = total_views + 1,
-                        total_users = total_users + 1
-                ")->execute(['tool_id' => $toolId]);
-            }
+        $toolId = (int)$tool['id'];
+        $cookieName = 'visited_tool_' . $toolId;
+        if (isset($_COOKIE[$cookieName])) {
+            // Recurring view
+            $db->prepare("
+                INSERT INTO tool_usage_stats (tool_id, total_views, recurring_views, total_users, total_seconds)
+                VALUES (:tool_id, 1, 1, 0, 0)
+                ON DUPLICATE KEY UPDATE 
+                    total_views = total_views + 1,
+                    recurring_views = recurring_views + 1
+            ")->execute(['tool_id' => $toolId]);
+        } else {
+            // New unique user view
+            setcookie($cookieName, '1', time() + (30 * 24 * 60 * 60), '/'); // 30 days
+            $db->prepare("
+                INSERT INTO tool_usage_stats (tool_id, total_views, recurring_views, total_users, total_seconds)
+                VALUES (:tool_id, 1, 0, 1, 0)
+                ON DUPLICATE KEY UPDATE 
+                    total_views = total_views + 1,
+                    total_users = total_users + 1
+            ")->execute(['tool_id' => $toolId]);
         }
 
         $pageTitle = $tool['meta_title'] ?? ($tool['name'] . ' - ' . App::siteName());

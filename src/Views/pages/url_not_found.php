@@ -11,7 +11,7 @@
         
         <!-- Description -->
         <p style="color: var(--color-text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 2.5rem;">
-            The short URL you are trying to access is incorrect, expired, or has been deleted by Admin.
+            The short URL you are trying to access is incorrect, expired, or has been deleted.
         </p>
 
         <!-- CTA Buttons -->
