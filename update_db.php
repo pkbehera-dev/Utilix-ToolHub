@@ -8,55 +8,55 @@ try {
     
     $db = \App\Config\Database::getConnection();
 
+    // Add database update queries here
     try {
-        // Find Category ID for utilities
+        // Find Category ID for text-tools
         $stmtCat = $db->prepare("SELECT id FROM categories WHERE slug = ?");
-        $stmtCat->execute(['utilities']);
+        $stmtCat->execute(['text-tools']);
         $catId = $stmtCat->fetchColumn();
 
         if ($catId) {
             $stmtTool = $db->prepare("INSERT IGNORE INTO tools (category_id, name, slug, description, icon, meta_title, meta_description) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $stmtTool->execute([
                 $catId,
-                'Unit Converter',
-                'unit-converter',
-                'Convert between various measurement units including length, weight, temperature, area, and volume instantly.',
-                'fa-scale-balanced',
-                'Unit Converter - UtiliX',
-                'Convert between various measurement units including length, weight, temperature, area, and volume instantly.'
+                'Text Editor',
+                'text-editor',
+                'A fully-featured rich text and plain text editor with HTML export, local auto-save, formatting tools, and real-time word/character count.',
+                'fa-file-signature',
+                'Online Text Editor - UtiliX',
+                'Write, edit, format, and download your text or HTML documents online with our free fully-featured rich text editor.'
             ]);
-            echo "Registered tool: Unit Converter under category 'utilities'.\n";
+            echo "Registered tool: Text Editor under category 'text-tools'.\n";
         } else {
-            echo "Category 'utilities' not found.\n";
+            echo "Category 'text-tools' not found.\n";
         }
     } catch (PDOException $e) {
         echo "Database error: " . $e->getMessage() . "\n";
     }
 
     try {
-        // Create tool_usage_stats table
-        $db->exec("CREATE TABLE IF NOT EXISTS tool_usage_stats (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            tool_id INT NOT NULL,
-            total_views INT DEFAULT 0,
-            recurring_views INT DEFAULT 0,
-            total_users INT DEFAULT 0,
-            total_seconds BIGINT DEFAULT 0,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (tool_id) REFERENCES tools(id) ON DELETE CASCADE,
-            UNIQUE KEY unique_tool (tool_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-        echo "Ensured tool_usage_stats table exists.\n";
+        // Find Category ID for developer-tools
+        $stmtCat = $db->prepare("SELECT id FROM categories WHERE slug = ?");
+        $stmtCat->execute(['developer-tools']);
+        $catId = $stmtCat->fetchColumn();
 
-        // Migrate views from tools table to tool_usage_stats table if stats table is empty
-        $countStats = $db->query("SELECT COUNT(*) FROM tool_usage_stats")->fetchColumn();
-        if ($countStats == 0) {
-            $db->exec("INSERT INTO tool_usage_stats (tool_id, total_views, total_users) 
-                       SELECT id, views, views FROM tools WHERE views > 0");
-            echo "Migrated historical view counts from tools to tool_usage_stats.\n";
+        if ($catId) {
+            $stmtTool = $db->prepare("INSERT IGNORE INTO tools (category_id, name, slug, description, icon, meta_title, meta_description) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmtTool->execute([
+                $catId,
+                'Password Hasher',
+                'password-hasher',
+                'Securely hash and verify passwords using Bcrypt, Argon2id, or Argon2i algorithms with custom parameters.',
+                'fa-key',
+                'Bcrypt & Argon2 Password Hasher - UtiliX',
+                'Securely hash your passwords using modern cryptographic algorithms including Bcrypt, Argon2id, and Argon2i with custom parameters.'
+            ]);
+            echo "Registered tool: Password Hasher under category 'developer-tools'.\n";
+        } else {
+            echo "Category 'developer-tools' not found.\n";
         }
     } catch (PDOException $e) {
-        echo "Database migration error: " . $e->getMessage() . "\n";
+        echo "Database error: " . $e->getMessage() . "\n";
     }
 
     echo "Database migration checked. No pending updates.\n";

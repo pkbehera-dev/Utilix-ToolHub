@@ -65,6 +65,9 @@ $router->get('/logout', [\App\Controllers\AuthController::class, 'logout']);
 // URL Shortener API
 $router->post('/api/shorten', [\App\Controllers\UrlController::class, 'shorten']);
 
+// Password Hasher APIs
+$router->post('/api/password-hasher/hash', [\App\Controllers\PasswordHasherController::class, 'hash']);
+
 // Quote Generator APIs
 $router->post('/api/quotes/add', [\App\Controllers\QuoteController::class, 'add']);
 $router->get('/api/quotes/generate', [\App\Controllers\QuoteController::class, 'generate']);
