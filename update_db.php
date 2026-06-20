@@ -10,6 +10,14 @@ try {
 
     // Add database update queries here
     try {
+        // Drop is_approved column from quotes table if it exists
+        $db->exec("ALTER TABLE quotes DROP COLUMN is_approved");
+        echo "Dropped column 'is_approved' from 'quotes' table.\n";
+    } catch (PDOException $e) {
+        echo "Note: " . $e->getMessage() . "\n";
+    }
+
+    try {
         // Find Category ID for text-tools
         $stmtCat = $db->prepare("SELECT id FROM categories WHERE slug = ?");
         $stmtCat->execute(['text-tools']);
