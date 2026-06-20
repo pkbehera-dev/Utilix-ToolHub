@@ -37,17 +37,4 @@ class App {
         return self::baseUrl() . '/' . ltrim($path, '/');
     }
 
-    /**
-     * Get the configured admin path prefix
-     */
-    public static function adminPrefix(): string {
-        return $_ENV['ADMIN_PREFIX'] ?? 'control-panel';
-    }
-
-    /**
-     * Get full URL for an admin path
-     */
-    public static function adminUrl(string $path = ''): string {
-        return self::url(self::adminPrefix() . '/' . ltrim($path, '/'));
-    }
 }

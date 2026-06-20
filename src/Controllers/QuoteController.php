@@ -19,7 +19,7 @@ class QuoteController {
         $excludeRaw = $_GET['exclude'] ?? '';
         $exclude = array_filter(array_map('intval', explode(',', $excludeRaw)));
 
-        $query = "SELECT id, quote_text, author, category, is_user_submitted, submitted_by FROM quotes WHERE is_approved = 1 ";
+        $query = "SELECT id, quote_text, author, category, is_user_submitted, submitted_by FROM quotes WHERE 1 ";
         $params = [];
 
         if (!empty($category) && $category !== 'All') {
@@ -131,7 +131,7 @@ class QuoteController {
         $category = Security::sanitize($_GET['category'] ?? 'All');
         $db = Database::getConnection();
 
-        $query = "SELECT id, quote_text, author, category, is_user_submitted, submitted_by FROM quotes WHERE is_approved = 1 ";
+        $query = "SELECT id, quote_text, author, category, is_user_submitted, submitted_by FROM quotes WHERE 1 ";
         $params = [];
 
         if (!empty($category) && $category !== 'All') {

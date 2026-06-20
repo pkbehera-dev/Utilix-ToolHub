@@ -55,12 +55,6 @@ $router->get('/terms', [\App\Controllers\HomeController::class, 'terms']);
 $router->get('/tool/{slug}', [\App\Controllers\HomeController::class, 'tool']);
 
 
-// Define Routes - Authentication
-$router->get('/login', [\App\Controllers\AuthController::class, 'login']);
-$router->post('/login/submit', [\App\Controllers\AuthController::class, 'authenticate']);
-$router->get('/login/2fa', [\App\Controllers\AuthController::class, 'show2fa']);
-$router->post('/login/2fa/submit', [\App\Controllers\AuthController::class, 'verify2fa']);
-$router->get('/logout', [\App\Controllers\AuthController::class, 'logout']);
 
 // URL Shortener API
 $router->post('/api/shorten', [\App\Controllers\UrlController::class, 'shorten']);
@@ -80,34 +74,6 @@ $router->post('/api/speedtest/upload', [\App\Controllers\SpeedTestController::cl
 // Usage Analytics API
 $router->post('/api/stats/track-time', [\App\Controllers\StatsController::class, 'trackTime']);
 
-// Define Routes - Admin Panel
-$adminPrefix = '/' . \App\Config\App::adminPrefix();
-
-$router->get($adminPrefix . '/dashboard', [\App\Controllers\AdminController::class, 'dashboard']);
-$router->get($adminPrefix . '/stats', [\App\Controllers\AdminController::class, 'stats']);
-
-$router->get($adminPrefix . '/tools', [\App\Controllers\AdminController::class, 'tools']);
-$router->get($adminPrefix . '/tools/edit/{id}', [\App\Controllers\AdminController::class, 'editTool']);
-$router->post($adminPrefix . '/tools/update/{id}', [\App\Controllers\AdminController::class, 'updateTool']);
-
-$router->get($adminPrefix . '/categories', [\App\Controllers\AdminController::class, 'categories']);
-$router->get($adminPrefix . '/categories/edit/{id}', [\App\Controllers\AdminController::class, 'editCategory']);
-$router->post($adminPrefix . '/categories/update/{id}', [\App\Controllers\AdminController::class, 'updateCategory']);
-
-$router->get($adminPrefix . '/urls', [\App\Controllers\AdminController::class, 'urls']);
-$router->get($adminPrefix . '/settings', [\App\Controllers\AdminController::class, 'settings']);
-$router->post($adminPrefix . '/settings/password', [\App\Controllers\AdminController::class, 'updatePassword']);
-$router->post($adminPrefix . '/urls/delete', [\App\Controllers\AdminController::class, 'deleteUrls']);
-
-// Admin - Feature Requests Management
-$router->get($adminPrefix . '/features', [\App\Controllers\AdminController::class, 'features']);
-$router->post($adminPrefix . '/features/solve', [\App\Controllers\AdminController::class, 'solveFeature']);
-$router->post($adminPrefix . '/features/delete', [\App\Controllers\AdminController::class, 'deleteFeature']);
-
-// Admin - Quotes Management
-$router->get($adminPrefix . '/quotes', [\App\Controllers\AdminController::class, 'quotes']);
-$router->post($adminPrefix . '/quotes/approve', [\App\Controllers\AdminController::class, 'approveQuote']);
-$router->post($adminPrefix . '/quotes/delete', [\App\Controllers\AdminController::class, 'deleteQuotes']);
 
 
 

@@ -74,12 +74,8 @@ class UrlController {
                 $aliasValue = null;
             }
 
-            Security::startSession();
-            $userId = $_SESSION['user_id'] ?? null;
-
-            $stmt = $db->prepare("INSERT INTO short_urls (user_id, long_url, short_code, alias) VALUES (:user_id, :long_url, :short_code, :alias)");
+            $stmt = $db->prepare("INSERT INTO short_urls (long_url, short_code, alias) VALUES (:long_url, :short_code, :alias)");
             $inserted = $stmt->execute([
-                'user_id' => $userId,
                 'long_url' => $longUrl,
                 'short_code' => $shortCode,
                 'alias' => $aliasValue

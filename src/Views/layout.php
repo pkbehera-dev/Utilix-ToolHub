@@ -104,11 +104,7 @@ $globalCategories = $stmtCatsList->fetchAll();
                 <button class="btn-icon" id="theme-toggle-btn" aria-label="Toggle Theme">
                     <i class="fa-solid fa-moon"></i>
                 </button>
-                <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="<?= App::adminUrl('/dashboard') ?>" class="btn btn-secondary">Dashboard</a>
-                <?php else: ?>
-                    <a href="<?= App::url('/login') ?>" class="btn btn-secondary">Sign In</a>
-                <?php endif; ?>
+
             </div>
         </div>
     </header>
@@ -169,13 +165,7 @@ $globalCategories = $stmtCatsList->fetchAll();
                         </div>
                     </a>
                 <?php endforeach; ?>
-                <a href="<?= App::adminUrl('/dashboard') ?>" class="cmd-item" data-category-slug="admin">
-                    <i class="fa-solid fa-gauge"></i>
-                    <div>
-                        <div class="font-medium text-sm">Admin Dashboard</div>
-                        <div class="text-xs text-muted">Manage site settings and users</div>
-                    </div>
-                </a>
+
             </div>
         </div>
     </div>
@@ -190,7 +180,7 @@ $globalCategories = $stmtCatsList->fetchAll();
     <!-- Scripts -->
     <script src="<?= App::url('assets/js/app.js') ?>?v=<?= App::VERSION ?>"></script>
 
-    <?php if (isset($isToolPage) && $isToolPage && isset($tool) && !empty($tool['slug']) && !(isset($_SESSION['role']) && $_SESSION['role'] === 'admin')): ?>
+    <?php if (isset($isToolPage) && $isToolPage && isset($tool) && !empty($tool['slug'])): ?>
     <script>
     (function() {
         const toolSlug = <?= json_encode($tool['slug']) ?>;

@@ -12,12 +12,6 @@ class StatsController {
     public function trackTime(): void {
         Security::startSession();
 
-        // Track only users, not admins
-        if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
-            http_response_code(200);
-            echo json_encode(['success' => true, 'message' => 'Skipped tracking for admin']);
-            exit;
-        }
 
         // Retrieve parameters from $_POST (standard FormData) or raw JSON POST body
         $rawInput = file_get_contents('php://input');
