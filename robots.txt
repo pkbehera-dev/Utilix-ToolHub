@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: /api/
-
-Sitemap: http://localhost/ToolBox/sitemap.xml
